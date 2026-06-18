@@ -15,8 +15,8 @@ local MAX_VISIBLE_ROWS = 22
 local menuFrame = CreateFrame("Frame", "WTRightClickFrame", UIParent, "UIDropDownMenuTemplate")
 
 function WhatsTrainingUI:Initialize()
-  self:InitDisplay()
   self.rows = {}
+  self:InitDisplay()
   self.tooltip = CreateFrame("GameTooltip", "WhatsTrainingTooltip", UIParent,
     "GameTooltipTemplate")
   self:SetupHooks()
