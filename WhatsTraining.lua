@@ -153,6 +153,7 @@ function WhatsTraining:Initialise()
 end
 
 function WhatsTraining:Refresh()
+  if not WhatsTrainingUI.frame then return end
   PlayerData:SetLevel(UnitLevel("player"))
   PlayerData:GetKnownSpells()
   PlayerData:GetAvailableSpells()

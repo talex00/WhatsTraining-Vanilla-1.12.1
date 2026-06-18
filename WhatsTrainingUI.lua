@@ -23,18 +23,23 @@ function WhatsTrainingUI:Initialize()
 end
 
 function WhatsTrainingUI:Update()
+  if not self.scrollBar then return end
   local totalItems = Utils.tableLength(self.rows) + 1
   FauxScrollFrame_Update(self.scrollBar, totalItems, MAX_VISIBLE_ROWS, ROW_HEIGHT);
 
   local offset = FauxScrollFrame_GetOffset(self.scrollBar)
+  local rowLevel = self.frame:GetFrameLevel() + 2
   for i, row in ipairs(self.rows) do
     if i >= offset and i < offset + MAX_VISIBLE_ROWS then
+      row:ClearAllPoints()
       local previousRow = self.rows[i - 1]
       if previousRow and previousRow:IsVisible() then
         row:SetPoint("TOPLEFT", previousRow, "BOTTOMLEFT", 0, -2)
       else
         row:SetPoint("TOPLEFT", self.frame, 26, -78)
       end
+      row:SetPoint("RIGHT", self.scrollBar)
+      row:SetFrameLevel(rowLevel)
       row:Show()
     else
       row:Hide()
@@ -67,6 +72,16 @@ function WhatsTrainingUI:HideFrame()
   if (self.frame) then
     self.frame:Hide()
   end
+  -- Restore spellbook page content if spellbook is still open
+  if SpellBookFrame:IsVisible() then
+    for i = 1, SPELLS_PER_PAGE do
+      local btn = getglobal("SpellButton" .. i)
+      if btn then btn:Show() end
+    end
+    if SpellBookPrevPageButton then SpellBookPrevPageButton:Show() end
+    if SpellBookNextPageButton then SpellBookNextPageButton:Show() end
+    if SpellBookPageText then SpellBookPageText:Show() end
+  end
 end
 
 function WhatsTrainingUI:ShowFrame()
@@ -77,6 +92,15 @@ function WhatsTrainingUI:ShowFrame()
     i = i + 1
   end
   
+  -- Hide spellbook page content so it doesn't show through
+  for i = 1, SPELLS_PER_PAGE do
+    local btn = getglobal("SpellButton" .. i)
+    if btn then btn:Hide() end
+  end
+  if SpellBookPrevPageButton then SpellBookPrevPageButton:Hide() end
+  if SpellBookNextPageButton then SpellBookNextPageButton:Hide() end
+  if SpellBookPageText then SpellBookPageText:Hide() end
+
   self.tab:SetChecked(true)
   self.frame:Show()
 end
@@ -151,10 +175,13 @@ function WhatsTrainingUI:InitDisplay()
   end)
   
   -- Enable mouse on scrollbar content area - positioned to not block spell tabs on left
+  -- Frame level is set lower than rows so that Hide()/Show() during scrolling
+  -- doesn't let this frame steal mouse events from the row buttons
   local scrollContent = CreateFrame("Frame", nil, self.frame)
   scrollContent:SetPoint("TOPLEFT", 60, -70)
   scrollContent:SetPoint("BOTTOMRIGHT", -60, 80)
   scrollContent:EnableMouse(true)
+  scrollContent:SetFrameLevel(self.frame:GetFrameLevel() + 1)
 
   self.frame:Hide()
 end
