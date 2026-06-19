@@ -409,14 +409,32 @@ function WhatsTrainingUI:SetItems(spells)
           end
           
           if not found then
-            -- Fallback to custom tooltip (SetHyperlink for spells is not supported in 1.12.1)
+            -- Fallback to custom tooltip using generated SpellDescriptions
+            local desc = SpellDescriptions and SpellDescriptions[row.spell.id]
             self.tooltip:AddLine(row.spell.name, 1, 1, 1)
             if row.spell.subText and row.spell.subText ~= "" then
               self.tooltip:AddLine(row.spell.subText, 0.5, 0.5, 0.5)
             end
-            self.tooltip:AddLine(" ")
-            self.tooltip:AddLine(row.spell.school, 1, 0.82, 0)
-            self.tooltip:AddLine("Level " .. row.spell.level .. " spell", 0.5, 0.5, 0.5)
+            
+            if desc then
+              -- Mana / Range
+              if desc.manaCost or desc.range then
+                self.tooltip:AddDoubleLine(desc.manaCost or "", desc.range or "", 1, 1, 1, 1, 1, 1)
+              end
+              -- Cast / Cooldown
+              if desc.castTime or desc.cooldown then
+                self.tooltip:AddDoubleLine(desc.castTime or "", desc.cooldown or "", 1, 1, 1, 1, 1, 1)
+              end
+              -- Description
+              if desc.description then
+                self.tooltip:AddLine(desc.description, 1, 0.82, 0, true)
+              end
+            else
+              -- Basic fallback if description is missing
+              self.tooltip:AddLine(" ")
+              self.tooltip:AddLine(row.spell.school, 1, 0.82, 0)
+              self.tooltip:AddLine("Level " .. row.spell.level .. " spell", 0.5, 0.5, 0.5)
+            end
           end
           
           if row.spell.cost and row.spell.cost > 0 then

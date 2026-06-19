@@ -22,6 +22,6 @@ Classes\Shaman.lua
 Classes\Warlock.lua
 Classes\Warrior.lua
 
+SpellDescriptions.lua
 WhatsTrainingUI.lua
 WhatsTraining.lua
-
