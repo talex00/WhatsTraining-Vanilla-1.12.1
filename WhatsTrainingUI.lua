@@ -72,16 +72,14 @@ function WhatsTrainingUI:HideFrame()
   if (self.frame) then
     self.frame:Hide()
   end
-  -- Restore spellbook page content if spellbook is still open
-  if SpellBookFrame:IsVisible() then
-    for i = 1, SPELLS_PER_PAGE do
-      local btn = getglobal("SpellButton" .. i)
-      if btn then btn:Show() end
-    end
-    if SpellBookPrevPageButton then SpellBookPrevPageButton:Show() end
-    if SpellBookNextPageButton then SpellBookNextPageButton:Show() end
-    if SpellBookPageText then SpellBookPageText:Show() end
+  -- Restore spellbook page content
+  for i = 1, SPELLS_PER_PAGE do
+    local btn = getglobal("SpellButton" .. i)
+    if btn then btn:Show() end
   end
+  if SpellBookPrevPageButton then SpellBookPrevPageButton:Show() end
+  if SpellBookNextPageButton then SpellBookNextPageButton:Show() end
+  if SpellBookPageText then SpellBookPageText:Show() end
 end
 
 function WhatsTrainingUI:ShowFrame()
